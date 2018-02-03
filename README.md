@@ -1,12 +1,12 @@
 # robins-hassio-config
 My home-assistant config from my experimental hassio instance.
 
-My [primary](https://github.com/robmarkcole/robins-homeassistant-config) home-assistant instance is running on a synology NAS, as this is a very stable platform. I run a Hassio instance on a pi 3 for experiments and testing.
+My [primary](https://github.com/robmarkcole/robins-homeassistant-config) home-assistant instance is running on a synology NAS. I run a Hassio instance on a pi 3 for experiments and testing of new integrations.
 
 ## Motion detection with a USB camera
 One of the main reasons I setup the Hassio instance was to build a usb camera based motion detection and alert system. I have a cheap ([10 pounds on Amazon](https://www.amazon.co.uk/gp/product/B000Q3VECE/ref=oh_aui_detailpage_o02_s00?ie=UTF8&psc=1)) usb webcam that captures images on motion detection [using](https://community.home-assistant.io/t/usb-webcam-on-hassio/37297/7) the [motion](https://motion-project.github.io/) hassio addon.
 
-##### Motion addon
+##### Motion addon setup
 I've configured the [motion](https://github.com/HerrHofrat/hassio-addons/tree/master/motion). add-on (via its hassio tab) with the following settings:
 
 ```yaml
@@ -22,20 +22,25 @@ I've configured the [motion](https://github.com/HerrHofrat/hassio-addons/tree/ma
   "snapshot_interval": 1,
   "snapshot_name": "latest",
   "picture_output": "best",
-  "picture_name": "%v-%Y%m%d%H%M%S-motion-capture",
+  "picture_name": "%v-%Y_%m_%d_%H_%M_%S-motion-capture",
   "webcontrol_local": "on",
   "webcontrol_html": "on"
 }
 ```
-This config captures an image every second, saved as latest.jpg and over-written every second. Additionally well on motion detection a time stamped image is saved for format ```%v-%Y%m%d%H%M%S-motion-capture.jpg```.
+This setup captures an image every second, saved as latest.jpg and over-written every second. Additionally, on motion detection a time stamped image is saved for format ```%v-%Y_%m_%d_%H_%M_%S-motion-capture```.
 
-The image latest.jpg (updated and over-written every second) is displayed on the HA front-end using a [local-file camera](https://home-assistant.io/components/camera.local_file/).
+##### HA config
+
+The image ```latest.jpg``` (updated and over-written every second) is displayed on the HA front-end using a [local-file camera](https://home-assistant.io/components/camera.local_file/). I also display the last motion captured image with a second file_sensor camera. **Note** that the image file (i.e. ```latest.jpg and MOTION.jpg```) must be present when HA starts as the component makes a check that the file exists. TO DO - ADD SCRIPT TO COPY THE LATEST MOTION TRIGGERED IMAGE FILE AND OVERWRITE MOTION.jpg
 
 ```yaml
 camera:
   - platform: local_file
     file_path: /share/motion/latest.jpg
     name: "Live view"
+  - platform: local_file
+    file_path: /share/motion/MOTION.jpg
+    name: "Last captured motion"
 ```
 I then use my [folder sensor custom component](https://github.com/robmarkcole/HASS-folder-sensor) to detect when new motion triggered images are saved:
 
@@ -69,15 +74,6 @@ sensor:
         friendly_name: "Last captured image"
         value_template: "{{states.sensor.motion.attributes.folder + states.sensor.motion.attributes.modified_file}}"
 ```
-
-WIP: Finally I can display the last captured image using a second local_file camera:
-```yaml
-camera:
-  - platform: local_file
-    file_path: "{{states.sensor.last_captured_image.state}}"
-    name: "Last captured motion"
-```
-Currently unsure how to use sensor state in template for file path.
 
 ## Tips
 ##### Recommended addons
