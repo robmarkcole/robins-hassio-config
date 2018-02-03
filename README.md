@@ -125,6 +125,9 @@ motion_stats:
     - sensor.number_of_files_motion
 ```
 
+The final view in HA is that shown at the top of this section. A photo of the setup is shown below.
+
+<img src="https://github.com/robmarkcole/robins-hassio-config/blob/master/images/camera_setup.jpg">
 
 ## Tips
 ##### Recommended addons
