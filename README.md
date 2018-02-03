@@ -19,7 +19,7 @@ I've configured the [motion](https://github.com/HerrHofrat/hassio-addons/tree/ma
   "input": 0,
   "width": 640,
   "height": 480,
-  "framerate": 5,
+  "framerate": 2,
   "text_right": "%Y-%m-%d %T-%q",
   "target_dir": "/share/motion",
   "snapshot_interval": 1,
