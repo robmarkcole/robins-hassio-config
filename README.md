@@ -27,7 +27,7 @@ I've configured the [motion](https://github.com/HerrHofrat/hassio-addons/tree/ma
   "webcontrol_html": "on"
 }
 ```
-This config captures an image every second, saved as latest.jpg and over-written every second. Additionally well on motion detection a time stamped image is saved for format "%v-%Y%m%d%H%M%S-motion-capture.jpg".
+This config captures an image every second, saved as latest.jpg and over-written every second. Additionally well on motion detection a time stamped image is saved for format ```%v-%Y%m%d%H%M%S-motion-capture.jpg```.
 
 The image latest.jpg (updated and over-written every second) is displayed on the HA front-end using a [local-file camera](https://home-assistant.io/components/camera.local_file/).
 
@@ -35,6 +35,7 @@ The image latest.jpg (updated and over-written every second) is displayed on the
 camera:
   - platform: local_file
     file_path: /share/motion/latest.jpg
+    name: "Live view"
 ```
 I then use my [folder sensor custom component](https://github.com/robmarkcole/HASS-folder-sensor) to detect when new motion triggered images are saved:
 
@@ -44,6 +45,39 @@ sensor:
     folder: /share/motion
     filter: '*capture.jpg'
 ```
+
+I then add a [counter](https://home-assistant.io/components/counter/) to count the number of new motion captured images.
+
+```yaml
+counter:
+  motion_counter:
+    initial: 0
+    step: 1
+```
+I used the automations editor to create an automation which increments the counter every time there is a state change of my folder sensor. I use a second automation to reset the counter every day.
+
+I then add a [template sensor](https://home-assistant.io/components/sensor.template/) to display the total number of motion images in the folder - if this gets very large I will delete some images to save disk space. I also add a template sensor to display the full path to the last captured image, as I will use this to display the image shortly.
+
+```yaml
+sensor:
+  - platform: template
+    sensors:
+      number_of_files_motion:
+        friendly_name: "Motion images"
+        value_template: "{{states.sensor.motion.attributes.number_of_files}}"
+      last_captured_image:
+        friendly_name: "Last captured image"
+        value_template: "{{states.sensor.motion.attributes.folder + states.sensor.motion.attributes.modified_file}}"
+```
+
+WIP: Finally I can display the last captured image using a second local_file camera:
+```yaml
+camera:
+  - platform: local_file
+    file_path: "{{states.sensor.last_captured_image.state}}"
+    name: "Last captured motion"
+```
+Currently unsure how to use sensor state in template for file path.
 
 ## Tips
 ##### Recommended addons
@@ -55,3 +89,6 @@ If the Hassio tab disappears from the front end, add to your config:
 hassio:
 ```
 and restart.
+
+##### Hassio config changes dont take effect
+If you edit the config and restart HA but don't see desired changes, then reboot the pi with ```hassio homeassistant reboot```.
