@@ -1,0 +1,13 @@
+motion_camera:
+  name: 'Motion camera'
+  view: yes
+  entities:
+    - camera.live_view
+    - camera.last_captured_motion
+    - group.motion_stats
+
+motion_stats:
+  entities:
+    - sensor.motion
+    - counter.motion_counter
+  #  - sensor.number_of_files_motion

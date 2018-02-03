@@ -122,7 +122,6 @@ motion_stats:
   entities:
     - sensor.motion
     - counter.motion_counter
-    - sensor.number_of_files_motion
 ```
 
 The final view in HA is that shown at the top of this section. A photo of the setup is shown below.

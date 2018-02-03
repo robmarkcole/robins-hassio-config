@@ -1,0 +1,71 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: 50.00
+  longitude: -0.0
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 0
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/London
+  # Customization file
+  customize: !include customize.yaml
+
+frontend:
+config:
+hassio:
+http:
+  # Secrets are defined in the file secrets.yaml
+  # api_password: !secret http_password
+updater:
+# Discover some devices automatically
+#discovery:
+conversation:
+history:
+logbook:
+map:
+sun:
+
+
+sensor:
+  - platform: yr
+  - platform: folder
+    folder: /share/motion/
+    filter: '*motion-capture.jpg'
+  - platform: template
+    sensors:
+      number_of_files_motion:
+        friendly_name: "Motion images"
+        value_template: "{{states.sensor.motion.attributes.number_of_files}}"
+      last_captured_image:
+        friendly_name: "Last captured image"
+        value_template: "{{states.sensor.motion.attributes.folder + states.sensor.motion.attributes.modified_file}}"
+
+
+counter:
+  motion_counter:
+    initial: 0
+    step: 1
+
+camera:
+  - platform: local_file
+    file_path: /share/motion/latest.jpg
+    name: "Live view"
+  - platform: local_file
+    file_path: /share/motion/MOTION.jpg
+    name: "Last captured motion"
+
+shell_command:
+  overwrite_motion_image: 'cp -rf {{states.sensor.last_captured_image.state}} /share/motion/MOTION.jpg'
+
+panel_iframe:
+  configurator:
+    title: Configurator
+    icon: mdi:wrench
+    url: http://hassio.local:3218
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
