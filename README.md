@@ -16,7 +16,7 @@ I've configured the [motion](https://github.com/HerrHofrat/hassio-addons/tree/ma
   "input": 0,
   "width": 640,
   "height": 480,
-  "framerate": 2,
+  "framerate": 5,
   "text_right": "%Y-%m-%d %T-%q",
   "target_dir": "/share/motion",
   "snapshot_interval": 1,
@@ -30,7 +30,7 @@ I've configured the [motion](https://github.com/HerrHofrat/hassio-addons/tree/ma
 This setup captures an image every second, saved as ```latest.jpg```, and is over-written every second. Additionally, on motion detection a time-stamped image is captured with format ```%v-%Y_%m_%d_%H_%M_%S-motion-capture.jpg```.
 
 ##### Home-Assistant config
-The image ```latest.jpg``` (updated and over-written every second) is displayed on the HA front-end using a [local-file camera](https://home-assistant.io/components/camera.local_file/). I also display the last motion captured image with a second file_sensor camera. **Note** that the image file (i.e. ```latest.jpg and MOTION.jpg```) must be present when HA starts as the component makes a check that the file exists. Therefor if running for the first time I just copy some images into the ```/share/motion``` folder and name appropriately.
+The image ```latest.jpg``` (updated and over-written every second) is displayed on the HA front-end using a [local-file camera](https://home-assistant.io/components/camera.local_file/). I also display the last motion captured image with a second file_sensor camera. **Note** that the image files (here ```latest.jpg and MOTION.jpg```) must be present when HA starts as the component makes a check that the file exists. Therefor if running for the first time I just copy some images into the ```/share/motion``` folder and name appropriately.
 
 ```yaml
 camera:
@@ -96,7 +96,7 @@ shell_command:
   overwrite_motion_image: 'cp -rf {{states.sensor.last_captured_image.state}} /share/motion/MOTION.jpg'
 ```
 
-I again use the automations editor to trigger the shell_command every time a new motion captured image is available, adding to ```automations.yaml```:
+I again use the automations editor to create an automation trigger the shell_command every time a new motion captured image is available, adding to ```automations.yaml```:
 ```yaml
 - action:
   - service: shell_command.overwrite_motion_image
@@ -108,6 +108,22 @@ I again use the automations editor to trigger the shell_command every time a new
     platform: state
 ```
 
+Lets put all the interesting entities in their own groups, adding to ```groups.yaml```:
+```yaml
+motion_camera:
+  name: 'Motion camera'
+  view: yes
+  entities:
+    - camera.live_view
+    - camera.last_captured_motion
+    - group.motion_stats
+
+motion_stats:
+  entities:
+    - sensor.motion
+    - counter.motion_counter
+    - sensor.number_of_files_motion
+```
 
 
 ## Tips
