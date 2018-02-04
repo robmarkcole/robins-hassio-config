@@ -52,6 +52,7 @@ sensor:
     folder: /share/motion
     filter: '*motion-capture.jpg'
 ```
+**WARNING** I had to repeatedly reboot my Hassio instance to get the folder component to configure. I'm not sure why this is necessary on Hassio as the component works fine on other platforms. I will update the component shortly and submit for formal review.
 
 I then add a [counter](https://home-assistant.io/components/counter/) to count the number of new motion captured images:
 
@@ -76,7 +77,19 @@ I used the automations editor to create an automation which increments the count
     platform: state
 ```
 
-I can also add an autiomation to reset the counter every day: TO DO
+I add an automation to reset the counter every day at midnight:
+```yaml
+- action:
+  - data:
+      entity_id: counter.motion_counter
+    service: counter.reset
+  alias: Daily reset motion counter
+  condition: []
+  id: '1517730530569'
+  trigger:
+  - at: 00:00:00
+    platform: time
+```
 
 I then add a [template sensor](https://home-assistant.io/components/sensor.template/) to display the total number of motion images in the ```/share/motion``` folder - if this gets very large I will delete some images to save disk space. I also add a template sensor to display the full path to the last motion captured time-stamped image, as I will use this to display the image shortly:
 
