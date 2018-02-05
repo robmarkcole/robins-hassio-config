@@ -144,6 +144,24 @@ The final view in HA is that shown at the top of this section. A photo of the se
 
 <img src="https://github.com/robmarkcole/robins-hassio-config/blob/master/images/camera_setup.jpg">
 
+## HomeBridge
+I use the [HomeBridge](https://github.com/hassio-addons/addon-homebridge) addon to integrate my HomeKit devices into HA. In particular I own the [Elgato door sensor](https://www.elgato.com/en/eve/eve-door-window) and the [Fibaro flood sensor](https://homekit.fibaro.com/). Both are binary sensors and the process of integrtating them with HA, so I will here just discuss the door sensor.
+
+##### Setup HomeBridge
+On following the docs, I encountered a problem (discussed [in this forum post](https://community.home-assistant.io/t/community-hass-io-add-on-homebridge/33803/111)) where I kept receiving an error in the HomeBridge logs ```Not a valid username```. The problem was fixed by entering a valid MAC address (I created one randomly) in ```config.json```. Then start the addon, and add home-assistant as a bridge accessory in the iOS Home app by selecting ```Add Accessory```, then ```Manual Code```, and entering the 8 digit code shown in the HomeBridge logs.
+
+##### Home-assistant Usage
+I use HomeBridge to toggle input_booleans in home-assistant, allowing HA to read the state of my HomeKit binary sensors. The method is described in [this forum thread](https://community.home-assistant.io/t/triggar-ha-from-homekit-devices/3253/11). I first configure (in home-assistant) an [input_boolean](https://home-assistant.io/components/input_boolean/) switch for each HomeKit device:
+
+```yaml
+input_boolean:
+  elgato_door:
+    name: Elgato door sensor
+    icon: mdi:door
+```
+
+CURRENTLY [NO HA DEVICES SHOWING IN IOS HOME](https://community.home-assistant.io/t/homebridge-error-502-bad-gateway/42076).
+
 ## Tips
 ##### Recommended addons
 At a minimum, I install the samba-share, ssh and configurator addons. I am also using the [motion](https://github.com/HerrHofrat/hassio-addons/tree/master/motion) addon.
