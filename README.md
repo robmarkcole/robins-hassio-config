@@ -163,7 +163,7 @@ input_boolean:
     icon: mdi:door
 ```
 
-Now in the iOS Home app create a HomeKit automation to toggle your HA input_boolean when the HomeKit device (here the Elgato door sensor) has a state change.
+Now in the iOS Home app create a HomeKit automation to toggle your HA input_boolean when the HomeKit device (here the Elgato door sensor) has a state change. The automation for the door opening is shown below. Add another automation for the door closing.
 
 <p align="center">
 <img src="https://github.com/robmarkcole/robins-hassio-config/blob/master/images/HomeKit_add_door.jpg" width="300">

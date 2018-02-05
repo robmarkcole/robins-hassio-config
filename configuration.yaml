@@ -2,7 +2,7 @@ homeassistant:
   # Name of the location where Home Assistant is running
   name: Home
   # Location required to calculate the time the sun rises and sets
-  latitude: 50.00
+  latitude: 50.0
   longitude: -0.0
   # Impacts weather/sunrise data (altitude above sea level in meters)
   elevation: 0
@@ -28,6 +28,29 @@ logbook:
 map:
 sun:
 
+camera:
+  - platform: local_file
+    file_path: /share/motion/latest.jpg
+    name: "Live view"
+  - platform: local_file
+    file_path: /share/motion/MOTION.jpg
+    name: "Last captured motion"
+
+counter:
+  motion_counter:
+    initial: 0
+    step: 1
+
+input_boolean:
+  elgato_door:
+    name: Elgato door sensor
+    icon: mdi:door
+
+panel_iframe:
+  configurator:
+    title: Configurator
+    icon: mdi:wrench
+    url: http://hassio.local:3218
 
 sensor:
   - platform: yr
@@ -43,28 +66,9 @@ sensor:
         friendly_name: "Last captured image"
         value_template: "{{states.sensor.motion.attributes.folder + states.sensor.motion.attributes.modified_file}}"
 
-
-counter:
-  motion_counter:
-    initial: 0
-    step: 1
-
-camera:
-  - platform: local_file
-    file_path: /share/motion/latest.jpg
-    name: "Live view"
-  - platform: local_file
-    file_path: /share/motion/MOTION.jpg
-    name: "Last captured motion"
-
 shell_command:
   overwrite_motion_image: 'cp -rf {{states.sensor.last_captured_image.state}} /share/motion/MOTION.jpg'
 
-panel_iframe:
-  configurator:
-    title: Configurator
-    icon: mdi:wrench
-    url: http://hassio.local:3218
 
 group: !include groups.yaml
 automation: !include automations.yaml
