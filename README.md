@@ -162,7 +162,9 @@ input_boolean:
 
 CURRENTLY [NO HA DEVICES SHOWING IN IOS HOME](https://community.home-assistant.io/t/homebridge-error-502-bad-gateway/42076).
 
-<img src="https://github.com/robmarkcole/robins-hassio-config/blob/master/images/HomeKit_add_door.jpg" width="200">
+<p align="center">
+<img src="https://github.com/robmarkcole/robins-hassio-config/blob/master/images/HomeKit_add_door.jpg" width="300">
+</p>
 
 ## Tips
 ##### Recommended addons
