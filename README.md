@@ -6,8 +6,9 @@ My [primary](https://github.com/robmarkcole/robins-homeassistant-config) home-as
 ## Motion detection with a USB camera
 One of the main reasons I setup the Hassio instance was to build a usb camera based motion detection and alert system. I have a cheap ([10 pounds on Amazon](https://www.amazon.co.uk/gp/product/B000Q3VECE/ref=oh_aui_detailpage_o02_s00?ie=UTF8&psc=1)) usb webcam that captures images on motion detection [using](https://community.home-assistant.io/t/usb-webcam-on-hassio/37297/7) the [motion](https://motion-project.github.io/) hassio addon. The final view in HA is shown below, with the live view camera image just cropped off the bottom of the image.
 
-<img src="https://github.com/robmarkcole/robins-hassio-config/blob/master/images/HA_motion_camera_view.png">
-
+<p align="center">
+<img src="https://github.com/robmarkcole/robins-hassio-config/blob/master/images/HA_motion_camera_view.png" width="500">
+</p>
 
 ##### Motion addon setup
 I've configured the [motion](https://github.com/HerrHofrat/hassio-addons/tree/master/motion) add-on (via its hassio tab) with the following settings:
@@ -142,7 +143,9 @@ motion_stats:
 
 The final view in HA is that shown at the top of this section. A photo of the setup is shown below.
 
-<img src="https://github.com/robmarkcole/robins-hassio-config/blob/master/images/camera_setup.jpg">
+<p align="center">
+<img src="https://github.com/robmarkcole/robins-hassio-config/blob/master/images/camera_setup.jpg" width="500">
+</p>
 
 ## HomeBridge
 I use the [HomeBridge](https://github.com/hassio-addons/addon-homebridge) addon to integrate my HomeKit devices into HA. In particular I own the [Elgato door sensor](https://www.elgato.com/en/eve/eve-door-window) and the [Fibaro flood sensor](https://homekit.fibaro.com/). Both are binary sensors and the process of integrtating them with HA, so I will here just discuss the door sensor.
