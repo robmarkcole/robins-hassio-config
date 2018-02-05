@@ -148,7 +148,7 @@ The final view in HA is that shown at the top of this section. A photo of the se
 </p>
 
 ## HomeBridge
-I use the [HomeBridge](https://github.com/hassio-addons/addon-homebridge) addon to integrate my HomeKit devices into HA. In particular I own the [Elgato door sensor](https://www.elgato.com/en/eve/eve-door-window) and the [Fibaro flood sensor](https://homekit.fibaro.com/). Both are binary sensors and the process of integrtating them with HA, so I will here just discuss the door sensor.
+I use the [HomeBridge](https://github.com/hassio-addons/addon-homebridge) addon to integrate my HomeKit devices into HA. In particular I own the [Elgato door sensor](https://www.elgato.com/en/eve/eve-door-window) and the [Fibaro flood sensor](https://homekit.fibaro.com/). Both are binary sensors and the process of integrating them with HA, so I will here just discuss the door sensor.
 
 ##### Setup HomeBridge
 On following the docs, I encountered a problem (discussed [in this forum post](https://community.home-assistant.io/t/community-hass-io-add-on-homebridge/33803/111)) where I kept receiving an error in the HomeBridge logs ```Not a valid username```. The problem was fixed by entering a valid MAC address (I created one randomly, also create a new one if you have to reinstall HomeBridge) in ```config.json```. Then start the addon, and add home-assistant as a bridge accessory in the iOS Home app by selecting ```Add Accessory```, then ```Manual Code```, and entering the 8 digit code shown in the HomeBridge logs. I created a room called HASS to put all my home-assistant devices in.
@@ -169,7 +169,17 @@ Now in the iOS Home app create a HomeKit automation to toggle your HA input_bool
 <img src="https://github.com/robmarkcole/robins-hassio-config/blob/master/images/HomeKit_add_door.jpg" width="300">
 </p>
 
-Now when your HomeKit device changes state, this will be mirrored in the home-assistant input_boolean.
+Now when your HomeKit device changes state, this will be mirrored in the home-assistant input_boolean. I use a [template binary sensor](https://home-assistant.io/components/binary_sensor.template/) to display the actual door state on the front-end:
+
+```yaml
+binary_sensor:
+  - platform: template
+    sensors:
+      front_door:
+        friendly_name: "Front door"
+        value_template: "{{is_state('input_boolean.elgato_door', 'on')}}"
+```
+
 
 ## Tips
 ##### Recommended addons
