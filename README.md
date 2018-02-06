@@ -180,6 +180,15 @@ binary_sensor:
         value_template: "{{is_state('input_boolean.elgato_door', 'on')}}"
 ```
 
+As my main HA install is a second HA instance (on a synology NAS), I add the front door to my main HA using the HA rest API, using a [restful binary sensor](https://home-assistant.io/components/binary_sensor.rest/):
+```yaml
+binary_sensor:
+  - platform: rest
+    scan_interval: 1
+    resource: http://HA_IP:8123/api/states/binary_sensor.front_door
+    name: front_door
+    value_template: '{{value_json.state}}'
+```
 
 ## Tips
 ##### Recommended addons
