@@ -1,5 +1,5 @@
 # robins-hassio-config
-My home-assistant config from my experimental hassio instance.
+My home-assistant config from my experimental hassio instance. Validated at HA 0.64.3.
 
 My [primary](https://github.com/robmarkcole/robins-homeassistant-config) home-assistant instance is running on a synology NAS. I run a Hassio instance on a pi 3 for experiments and testing of new integrations.
 
