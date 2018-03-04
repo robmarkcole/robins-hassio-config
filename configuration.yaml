@@ -48,6 +48,11 @@ input_boolean:
     name: Elgato door sensor
     icon: mdi:door
 
+notify:
+  - name: pushbullet
+    platform: pushbullet
+    api_key: !secret pushbullet_key
+
 panel_iframe:
   configurator:
     title: Configurator
@@ -74,6 +79,11 @@ sensor:
 shell_command:
   overwrite_motion_image: 'cp -rf {{states.sensor.last_captured_image.state}} /share/motion/MOTION.jpg'
 
+telegram_bot:
+  - platform: broadcast
+    api_key: !secret telegram_api
+    allowed_chat_ids:
+      - !secret telegram_chat_id
 
 group: !include groups.yaml
 automation: !include automations.yaml
