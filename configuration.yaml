@@ -60,11 +60,11 @@ panel_iframe:
     url: http://hassio.local:3218
 
 sensor:
-  - platform: yr
   - platform: folder
     folder: /share/motion/
     filter: '*motion-capture.jpg'
   - platform: command_line
+    scan_interval: 20
     name: new_image
     command: "ls /share/motion -Art | tail -n -3 | grep 'capture.jpg'"
   - platform: template
@@ -72,9 +72,6 @@ sensor:
       number_of_files_motion:
         friendly_name: "Motion images"
         value_template: "{{states.sensor.motion.attributes.number_of_files}}"
-      last_captured_image:
-        friendly_name: "Last captured image"
-        value_template: "{{states.sensor.motion.attributes.folder + states.sensor.motion.attributes.modified_file}}"
 
 shell_command:
   overwrite_motion_image: 'cp -rf {{states.sensor.last_captured_image.state}} /share/motion/MOTION.jpg'
