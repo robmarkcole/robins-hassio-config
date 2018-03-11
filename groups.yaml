@@ -11,3 +11,8 @@ motion_stats:
     - sensor.motion
     - counter.motion_counter
   #  - sensor.number_of_files_motion
+
+  sensors:
+    view: yes
+    entities:
+      - binary_sensor.front_door

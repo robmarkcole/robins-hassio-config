@@ -9,10 +9,22 @@
   - entity_id: sensor.motion
     platform: state
 - action:
-  - service: shell_command.overwrite_motion_image
-  alias: Overwrite MOTION
+  - data:
+      message: '{{states.sensor.new_image.state}}'
+    service: notify.pushbullet
+  alias: New image notification
   condition: []
   id: '1517653449704'
   trigger:
-  - entity_id: camera.last_captured_motion
+  - entity_id: sensor.new_image
     platform: state
+- action:
+  - data:
+      entity_id: counter.motion_counter
+    service: counter.reset
+  alias: Daily reset motion counter
+  condition: []
+  id: '1517730530569'
+  trigger:
+  - at: 00:00:00
+    platform: time

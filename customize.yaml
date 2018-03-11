@@ -1,0 +1,2 @@
+binary_sensor.front_door:
+  icon: mdi:door
