@@ -1,0 +1,20 @@
+- platform: tplink
+  host: !secret tplink_ip
+
+- platform: command_line
+  switches:
+    macbook_power:
+      command_on: ""
+      command_off: ""
+
+- platform: template
+  switches:
+    alarm:
+      friendly_name: 'Blink alarm toggle'
+      value_template: "{{ is_state('binary_sensor.blink_armed_status', 'on') }}"
+      turn_on:
+        service: script.turn_on
+        entity_id: script.alarm_on_script
+      turn_off:
+        service: script.turn_on
+        entity_id: script.alarm_off_script

@@ -1,41 +1,63 @@
+## HASS config
 homeassistant:
-  # Name of the location where Home Assistant is running
   name: Home
-  # Location required to calculate the time the sun rises and sets
-  latitude: 51.0
-  longitude: -0.0
-  # Impacts weather/sunrise data (altitude above sea level in meters)
-  elevation: 0
-  # metric for Metric, imperial for Imperial
+  latitude: !secret home_latitude
+  longitude: !secret home_longitude
+  elevation: 39
   unit_system: metric
-  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
   time_zone: Europe/London
-  # Customization file
   customize: !include customize.yaml
   whitelist_external_dirs:
+    - /config/
     - /share
 
 frontend:
-config:
-hassio:
-http:
-  # Secrets are defined in the file secrets.yaml
-  # api_password: !secret http_password
-updater:
-# Discover some devices automatically
-#discovery:
-conversation:
+  javascript_version: es5
+discovery:
+  ignore:
+    - plex_mediaserver
+    - apple_tv
 history:
 logbook:
-map:
 sun:
+config:
+hassio:
+#cloud:
+ios:
+python_script:
+updater:
+  include_used_components: true
+#logger:
+#  default: debug
 
-binary_sensor:
-  - platform: template
-    sensors:
-      front_door:
-        friendly_name: "Front door"
-        value_template: "{{is_state('input_boolean.elgato_door', 'on')}}"
+###########################################################################
+## Zones
+zone:
+  name: Home
+  latitude: !secret home_latitude
+  longitude: !secret home_longitude
+  radius: 200
+  icon: mdi:home
+
+
+zone 1:
+  name: Work
+  latitude: !secret work_latitude
+  longitude: !secret work_longitude
+  radius: 1000
+  icon: mdi:worker
+
+zone 3:
+  name: Waterloo
+  latitude: 51.5032
+  longitude: -0.1123
+  radius: 200
+  icon: mdi:train
+###########################################################################
+
+blink:
+  username: !secret blink_username
+  password: !secret blink_password
 
 camera:
   - platform: local_file
@@ -50,19 +72,46 @@ counter:
     initial: 0
     step: 1
 
-#hue:
- # bridges:
-  #  - host: 192.168.0.3
+hue:
+  bridges:
+    - host: 192.168.0.3
+
+http:
+  api_password: !secret http_password
+  login_attempts_threshold: 5
+
+input_boolean:
+  house_idle:
+    name: No motion for at least 5 minutes
+    initial: off
+    icon: mdi:timer
+  elgato_door:
+    name: Elgato door sensor
+    icon: mdi:door
+
+ifttt:
+  key: !secret ifttt_key
+
+light:
+  platform: hue
+  host: !secret hue_ip
+
+mqtt:
+  broker: !secret nas_ip
 
 notify:
+  - name: robins_and_marias_iphones
+    platform: group
+    services:
+      - service: ios_robins_iphone
+      - service: ios_marias_iphone
   - name: pushbullet
     platform: pushbullet
     api_key: !secret pushbullet_key
 
-input_boolean:
-  elgato_door:
-    name: Elgato door sensor
-    icon: mdi:door
+nest:
+  client_id: !secret nest_id
+  client_secret: !secret nest_secret
 
 panel_iframe:
   configurator:
@@ -70,25 +119,14 @@ panel_iframe:
     icon: mdi:wrench
     url: http://hassio.local:3218
 
-sensor:
-  - platform: filesize
-    file_paths:
-      - /config/home-assistant_v2.db
-  - platform: folder
-    folder: /share/motion/
-    filter: '*motion-capture.jpg'
-  - platform: command_line
-    scan_interval: 20
-    name: new_image
-    command: "ls /share/motion -Art | tail -n -3 | grep 'capture.jpg'"
-  - platform: template
-    sensors:
-      number_of_files_motion:
-        friendly_name: "Motion images"
-        value_template: "{{states.sensor.motion.attributes.number_of_files}}"
+#recorder:
+#  db_url: !secret my_sql_nas
+recorder:
+  db_url: !secret google_sql
 
-shell_command:
-  overwrite_motion_image: 'cp -rf {{states.sensor.last_captured_image.state}} /share/motion/MOTION.jpg'
+timer:
+  kettle:
+    duration: '00:05:00'
 
 telegram_bot:
   - platform: broadcast
@@ -96,6 +134,19 @@ telegram_bot:
     allowed_chat_ids:
       - !secret telegram_chat_id
 
-#group: !include groups.yaml
-automation: !include automations.yaml
+shell_command:
+  overwrite_motion_image: 'cp -rf {{states.sensor.new_image.state}} /share/motion/MOTION.jpg'
+
+wemo:
+  static:
+    - !secret wemo_ip
+
+###########################################################################
+## Includes
+
 script: !include scripts.yaml
+switch: !include switch.yaml
+binary_sensor: !include binary_sensor.yaml
+sensor: !include sensor.yaml
+automation: !include automations.yaml
+group: !include groups.yaml

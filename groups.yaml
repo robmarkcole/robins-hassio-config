@@ -1,18 +1,78 @@
-motion_camera:
-  name: 'Motion camera'
+default_view:
   view: yes
   entities:
     - camera.live_view
     - camera.last_captured_motion
-    - group.motion_stats
+    - group.Controls
+    - group.Weather
+    - group.Travel
+    - group.Sensors
+#    - group.BME680
+#    - group.scripts
 
-motion_stats:
+Controls:
   entities:
-    - sensor.motion
-    - counter.motion_counter
-  #  - sensor.number_of_files_motion
+    - switch.alarm
+    - light.lamp
+    - switch.tv
+#    - switch.wemo_insight
+    - script.ifttt_boil_kettle
 
-  sensors:
-    view: yes
-    entities:
-      - binary_sensor.front_door
+Weather:
+  entities:
+    - sensor.darksky_sensor_summary
+    - sensor.darksky_sensor_precip_probability
+    - sensor.merton
+    - sensor.darksky_sensor_temperature
+    - sensor.living_room_temperature
+
+Travel:
+  entities:
+    - sensor.home_to_work
+    - sensor.home_to_waterloo
+    - sensor.district
+
+Sensors:
+  entities:
+    - sensor.time
+    - sensor.number_of_files_motion
+    - switch.macbook_power
+#    - input_boolean.house_idle
+    - sensor.time_in_bed_template
+    - binary_sensor.in_bed_bayesian
+    - sensor.bayes_probability
+    - binary_sensor.living_room_nest_protect_online
+    - binary_sensor.kettle
+
+Blink:
+  #view: yes
+  entities:
+    - sensor.blink_blink_camera_percy_notifications
+    - switch.alarm
+    - binary_sensor.blink_armed_status
+    - script.blink_capture_script
+    - camera.blink_camera_percy
+
+Scripts:
+#  view: yes
+  entities:
+    - script.activate_hue_remote_python
+    - script.activate_home_temperature_python
+    - script.activate_train_state_python
+
+Family:
+  entities:
+    - device_tracker.robins_iphone
+    - device_tracker.marias_iphone
+
+Hue:
+  entities:
+    - sensor.bedroom_motion_sensor
+    - sensor.hall_motion_sensor
+    - sensor.living_room_motion_sensor
+    - sensor.living_room_temperature
+    - sensor.living_room_light_level
+    - sensor.living_room_remote
+    - sensor.remote_bedroom
+    - sensor.robins_iphone
+    - sensor.hue_tap
