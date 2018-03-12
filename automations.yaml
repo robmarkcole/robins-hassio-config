@@ -33,3 +33,31 @@
   - entity_id: binary_sensor.kettle
     platform: state
     to: 'on'
+- action:
+  - service: shell_command.overwrite_motion_image
+  alias: Overwrite MOTION
+  condition: []
+  id: '1517653449704'
+  trigger:
+  - entity_id: camera.last_captured_motion
+    platform: state
+- action:
+  - data:
+      entity_id: counter.motion_counter
+    service: counter.increment
+  alias: Motion counter
+  condition: []
+  id: '1517643989583'
+  trigger:
+  - entity_id: sensor.motion
+    platform: state
+- action:
+  - data:
+      entity_id: counter.motion_counter
+    service: counter.reset
+  alias: Daily reset motion counter
+  condition: []
+  id: '1517730530569'
+  trigger:
+  - at: 00:00:00
+    platform: time

@@ -72,6 +72,9 @@ counter:
     initial: 0
     step: 1
 
+folder_watcher:
+  - folder: /share/motion
+
 hue:
   bridges:
     - host: 192.168.0.3
@@ -135,7 +138,7 @@ telegram_bot:
       - !secret telegram_chat_id
 
 shell_command:
-  overwrite_motion_image: 'cp -rf {{states.sensor.new_image.state}} /share/motion/MOTION.jpg'
+  overwrite_motion_image: 'cp -rf /share/motion/{{states.sensor.new_image.state}} /share/motion/MOTION.jpg'
 
 wemo:
   static:
