@@ -62,16 +62,16 @@
   - at: 00:00:00
     platform: time
 - action:
-  - data:
-      message: Created {{trigger.event.data.file}} in {{trigger.event.data.folder}}
-    data_template:
-      message: Created {{trigger.event.data.file}} in {{trigger.event.data.folder}}
+  - data_template:
+      message: 'Created {{trigger.event.data.file}} in {{trigger.event.data.folder}}'
+      title: New image captured!
+      data:
+        file: "{{trigger.event.data.folder}}/{{trigger.event.data.file}}"
     service: notify.pushbullet
   alias: New file alert
   condition: []
   id: '1520092824697'
   trigger:
-  - event_data:
-      event_type: created
+  - event_data: {"event_type":"created"}
     event_type: folder_watcher
     platform: event
