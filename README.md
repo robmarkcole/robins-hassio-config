@@ -45,66 +45,39 @@ camera:
     file_path: /share/motion/MOTION.jpg
     name: "Last captured motion"
 ```
-I then use my [folder sensor custom component](https://github.com/robmarkcole/HASS-folder-sensor) to detect when new motion triggered images are saved:
+I use the [folder_watcher component](https://www.home-assistant.io/components/folder_watcher/) to detect when new motion triggered images are saved:
 
 ```yaml
-sensor:
-  - platform: folder
-    folder: /share/motion
-    filter: '*motion-capture.jpg'
+folder_watcher:
+  - folder: /share/motion
+    patterns:
+      - '*capture.jpg'
 ```
-**WARNING** I had to repeatedly reboot my Hassio instance to get the folder component to configure. I'm not sure why this is necessary on Hassio as the component works fine on other platforms. I will update the component shortly and submit for formal review.
 
-I then add a [counter](https://home-assistant.io/components/counter/) to count the number of new motion captured images:
-
+The `folder_watcher` fires an event with the event data including the image path to the added file. I can display the image path using the [input_text](https://www.home-assistant.io/components/input_text/) component. In `configuration.yaml`:
 ```yaml
-counter:
-  motion_counter:
-    initial: 0
-    step: 1
+input_text:
+  last_added_file:
+    name: Last added file
+    initial: None
 ```
-I used the automations editor to create an automation which increments the counter every time there is a state change of my folder sensor. In ```automations.yaml``` I have:
-
+I then use an automation to write the `folder_watcher` image path data to the `input_text`, in `automations.yaml`:
 ```yaml
 - action:
-  - data:
-      entity_id: counter.motion_counter
-    service: counter.increment
-  alias: Motion counter
+    data_template:
+      value: " {{ trigger.event.data.path }} "
+    entity_id: input_text.last_added_file
+    service: input_text.set_value
+  alias: Update input_text
   condition: []
-  id: '1517643989583'
+  id: '1520092824600'
   trigger:
-  - entity_id: sensor.motion
-    platform: state
+  - event_data: {"event_type":"created"}
+    event_type: folder_watcher
+    platform: event
 ```
 
-I add an automation to reset the counter every day at midnight:
-```yaml
-- action:
-  - data:
-      entity_id: counter.motion_counter
-    service: counter.reset
-  alias: Daily reset motion counter
-  condition: []
-  id: '1517730530569'
-  trigger:
-  - at: 00:00:00
-    platform: time
-```
-
-I then add a [template sensor](https://home-assistant.io/components/sensor.template/) to display the total number of motion images in the ```/share/motion``` folder - if this gets very large I will delete some images to save disk space. I also add a template sensor to display the full path to the last motion captured time-stamped image, as I will use this to display the image shortly:
-
-```yaml
-sensor:
-  - platform: template
-    sensors:
-      number_of_files_motion:
-        friendly_name: "Motion images"
-        value_template: "{{states.sensor.motion.attributes.number_of_files}}"
-      last_captured_image:
-        friendly_name: "Last captured image"
-        value_template: "{{states.sensor.motion.attributes.folder + states.sensor.motion.attributes.modified_file}}"
-```
+TO DO - ADD AUTOMATION ON input_text state change to trigger the shell command.
 
 The next step is to use a [shell_command](https://home-assistant.io/components/shell_command/) to over-write ```MOTION.jpg``` with the latest time-stamped image, so that it is displayed on the HA front-end by the ```local_file``` camera configured earlier:
 
