@@ -34,24 +34,6 @@
     platform: state
     to: 'on'
 - action:
-  - service: shell_command.overwrite_motion_image
-  alias: Overwrite MOTION
-  condition: []
-  id: '1517653449704'
-  trigger:
-  - entity_id: camera.last_captured_motion
-    platform: state
-- action:
-  - data:
-      entity_id: counter.motion_counter
-    service: counter.increment
-  alias: Motion counter
-  condition: []
-  id: '1517643989583'
-  trigger:
-  - entity_id: sensor.motion
-    platform: state
-- action:
   - data:
       entity_id: counter.motion_counter
     service: counter.reset
@@ -63,15 +45,38 @@
     platform: time
 - action:
   - data_template:
-      message: 'Created {{trigger.event.data.file}} in {{trigger.event.data.folder}}'
+      message: Created {{ trigger.event.data.file }} in {{ trigger.event.data.folder
+        }}
       title: New image captured!
       data:
-        file: "{{trigger.event.data.folder}}/{{trigger.event.data.file}}"
+        file: ' {{ trigger.event.data.path }} '
     service: notify.pushbullet
   alias: New file alert
   condition: []
   id: '1520092824697'
   trigger:
-  - event_data: {"event_type":"created"}
+  - event_data:
+      event_type: created
     event_type: folder_watcher
     platform: event
+- action:
+    data_template:
+      value: ' {{ trigger.event.data.path }} '
+    entity_id: input_text.last_added_file
+    service: input_text.set_value
+  alias: Update input_text
+  condition: []
+  id: '1520092824600'
+  trigger:
+  - event_data:
+      event_type: created
+    event_type: folder_watcher
+    platform: event
+- action:
+  - service: shell_command.overwrite_motion_image
+  alias: New image displayed
+  condition: []
+  id: '1523956824296'
+  trigger:
+  - entity_id: input_text.last_added_file
+    platform: state

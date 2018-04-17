@@ -77,16 +77,14 @@ I then use an automation to write the `folder_watcher` image path data to the `i
     platform: event
 ```
 
-TO DO - ADD AUTOMATION ON input_text state change to trigger the shell command.
-
 The next step is to use a [shell_command](https://home-assistant.io/components/shell_command/) to over-write ```MOTION.jpg``` with the latest time-stamped image, so that it is displayed on the HA front-end by the ```local_file``` camera configured earlier:
 
 ```yaml
 shell_command:
-  overwrite_motion_image: 'cp -rf {{states.sensor.last_captured_image.state}} /share/motion/MOTION.jpg'
+  overwrite_motion_image: 'cp -rf {{states.input_text.last_added_file.state}} /share/motion/MOTION.jpg'
 ```
 
-I again use the automations editor to create an automation trigger the shell_command every time a new motion captured image is available, adding to ```automations.yaml```:
+Finally we use an automation to call the shell_command every time the `input_text` is updated and a new motion captured image is available, adding to ```automations.yaml```:
 ```yaml
 - action:
   - service: shell_command.overwrite_motion_image
@@ -94,24 +92,8 @@ I again use the automations editor to create an automation trigger the shell_com
   condition: []
   id: '1517653449704'
   trigger:
-  - entity_id: camera.last_captured_motion
+  - entity_id: input_text.last_added_file
     platform: state
-```
-
-Lets put all the interesting entities in their own groups, adding to ```groups.yaml```:
-```yaml
-motion_camera:
-  name: 'Motion camera'
-  view: yes
-  entities:
-    - camera.live_view
-    - camera.last_captured_motion
-    - group.motion_stats
-
-motion_stats:
-  entities:
-    - sensor.motion
-    - counter.motion_counter
 ```
 
 The final view in HA is that shown at the top of this section. A photo of the setup is shown below.

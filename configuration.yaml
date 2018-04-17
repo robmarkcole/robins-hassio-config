@@ -74,6 +74,8 @@ counter:
 
 folder_watcher:
   - folder: /share/motion
+    patterns:
+      - '*capture.jpg'
 
 hue:
   bridges:
@@ -91,6 +93,11 @@ input_boolean:
   elgato_door:
     name: Elgato door sensor
     icon: mdi:door
+
+input_text:
+  last_added_file:
+    name: Last added file
+    initial: None
 
 ifttt:
   key: !secret ifttt_key
@@ -122,10 +129,11 @@ panel_iframe:
     icon: mdi:wrench
     url: http://hassio.local:3218
 
-#recorder:
-#  db_url: !secret my_sql_nas
 recorder:
-  db_url: !secret google_sql
+  db_url: !secret madia_db
+
+shell_command:
+  overwrite_motion_image: 'cp -rf {{states.input_text.last_added_file.state}} /share/motion/MOTION.jpg'
 
 timer:
   kettle:
@@ -136,9 +144,6 @@ telegram_bot:
     api_key: !secret telegram_api
     allowed_chat_ids:
       - !secret telegram_chat_id
-
-shell_command:
-  overwrite_motion_image: 'cp -rf /share/motion/{{states.sensor.new_image.state}} /share/motion/MOTION.jpg'
 
 wemo:
   static:
