@@ -84,6 +84,8 @@ shell_command:
   overwrite_motion_image: 'cp -rf {{states.input_text.last_added_file.state}} /share/motion/MOTION.jpg'
 ```
 
+TO DO: GET RID OF INPUT_TEXT AND JUST USE A TEMPLATE ON THE SHELL_COMMAND
+
 Finally I use an automation to call the `shell_command` every time the `input_text` is updated and a new image is available, adding to `automations.yaml`:
 ```yaml
 - action:
