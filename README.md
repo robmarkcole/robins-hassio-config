@@ -34,7 +34,7 @@ I've configured the [motion](https://github.com/HerrHofrat/hassio-addons/tree/ma
 This setup captures an image every second, saved as `latest.jpg`, and is over-written every second. Additionally, on motion detection a time-stamped image is captured with format `%v-%Y_%m_%d_%H_%M_%S-motion-capture.jpg`.
 
 ##### Home-Assistant config
-The image `latest.jpg` (updated and over-written every second) is displayed on the HA front-end using a [local-file camera](https://home-assistant.io/components/camera.local_file/). I also display the last motion captured image with a second file_sensor camera. **Note** that the image files (here `latest.jpg` and `MOTION.jpg`) must be present when HA starts as the component makes a check that the file exists. Therefore if running for the first time I just copy some images into the `/share/motion` folder and name appropriately. In `configuration.yaml`:
+The image `latest.jpg` (updated and over-written every second) is displayed on the HA front-end using a [local-file camera](https://home-assistant.io/components/camera.local_file/). I also display the last motion captured image with a second `local_file` camera. **Note** that the image files (here `latest.jpg` and `MOTION.jpg`) must be present when HA starts as the component makes a check that the file exists, and therefore if running for the first time just copy some appropriately named images into the `/share/motion` folder. In `configuration.yaml`:
 
 ```yaml
 camera:
@@ -84,7 +84,7 @@ shell_command:
   overwrite_motion_image: 'cp -rf {{states.input_text.last_added_file.state}} /share/motion/MOTION.jpg'
 ```
 
-Finally we use an automation to call the shell_command every time the `input_text` is updated and a new motion captured image is available, adding to `automations.yaml`:
+Finally I use an automation to call the `shell_command` every time the `input_text` is updated and a new image is available, adding to `automations.yaml`:
 ```yaml
 - action:
   - service: shell_command.overwrite_motion_image
