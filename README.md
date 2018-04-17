@@ -1,5 +1,5 @@
 # robins-hassio-config
-My home-assistant config from my experimental hassio instance. Validated at HA 0.64.3.
+My home-assistant config from my experimental hassio instance. Validated at HA 0.67.
 
 My [primary](https://github.com/robmarkcole/robins-homeassistant-config) home-assistant instance is running on a synology NAS. I run a Hassio instance on a pi 3 for experiments and testing of new integrations.
 
@@ -31,10 +31,10 @@ I've configured the [motion](https://github.com/HerrHofrat/hassio-addons/tree/ma
   "webcontrol_html": "on"
 }
 ```
-This setup captures an image every second, saved as ```latest.jpg```, and is over-written every second. Additionally, on motion detection a time-stamped image is captured with format ```%v-%Y_%m_%d_%H_%M_%S-motion-capture.jpg```.
+This setup captures an image every second, saved as `latest.jpg`, and is over-written every second. Additionally, on motion detection a time-stamped image is captured with format `%v-%Y_%m_%d_%H_%M_%S-motion-capture.jpg`.
 
 ##### Home-Assistant config
-The image ```latest.jpg``` (updated and over-written every second) is displayed on the HA front-end using a [local-file camera](https://home-assistant.io/components/camera.local_file/). I also display the last motion captured image with a second file_sensor camera. **Note** that the image files (here ```latest.jpg and MOTION.jpg```) must be present when HA starts as the component makes a check that the file exists. Therefor if running for the first time I just copy some images into the ```/share/motion``` folder and name appropriately.
+The image `latest.jpg` (updated and over-written every second) is displayed on the HA front-end using a [local-file camera](https://home-assistant.io/components/camera.local_file/). I also display the last motion captured image with a second file_sensor camera. **Note** that the image files (here `latest.jpg` and `MOTION.jpg`) must be present when HA starts as the component makes a check that the file exists. Therefore if running for the first time I just copy some images into the `/share/motion` folder and name appropriately. In `configuration.yaml`:
 
 ```yaml
 camera:
@@ -54,14 +54,14 @@ folder_watcher:
       - '*capture.jpg'
 ```
 
-The `folder_watcher` fires an event with the event data including the image path to the added file. I can display the image path using the [input_text](https://www.home-assistant.io/components/input_text/) component. In `configuration.yaml`:
+The `folder_watcher` fires an event with the event data including the image path to the added file. I can break out the image path data using the [input_text](https://www.home-assistant.io/components/input_text/) component, so that the image file path from folder_watcher is stored in the state of the `input_text` entity. In `configuration.yaml` I first add the `input_text` entity:
 ```yaml
 input_text:
   last_added_file:
     name: Last added file
     initial: None
 ```
-I then use an automation to write the `folder_watcher` image path data to the `input_text`, in `automations.yaml`:
+I then use an automation to write the image path data to the `input_text`, in `automations.yaml`:
 ```yaml
 - action:
     data_template:
@@ -77,14 +77,14 @@ I then use an automation to write the `folder_watcher` image path data to the `i
     platform: event
 ```
 
-The next step is to use a [shell_command](https://home-assistant.io/components/shell_command/) to over-write ```MOTION.jpg``` with the latest time-stamped image, so that it is displayed on the HA front-end by the ```local_file``` camera configured earlier:
+The next step is to use a [shell_command](https://home-assistant.io/components/shell_command/) to over-write `MOTION.jpg` with the latest image, so that it is displayed on the HA front-end by the `local_file` camera configured earlier:
 
 ```yaml
 shell_command:
   overwrite_motion_image: 'cp -rf {{states.input_text.last_added_file.state}} /share/motion/MOTION.jpg'
 ```
 
-Finally we use an automation to call the shell_command every time the `input_text` is updated and a new motion captured image is available, adding to ```automations.yaml```:
+Finally we use an automation to call the shell_command every time the `input_text` is updated and a new motion captured image is available, adding to `automations.yaml`:
 ```yaml
 - action:
   - service: shell_command.overwrite_motion_image
