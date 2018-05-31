@@ -3,6 +3,9 @@ My home-assistant config from my experimental hassio instance. Validated at HA 0
 
 My [primary](https://github.com/robmarkcole/robins-homeassistant-config) home-assistant instance is running on a synology NAS. I run a Hassio instance on a pi 3 for experiments and testing of new integrations.
 
+# Image classification
+I'm using a [custom component](https://github.com/robmarkcole/HASS-Machinebox-Classificationbox) to perform image classification on images captured by my motion triggered camera. I've trained a [Classificatiobox](https://machinebox.io/docs/classificationbox) classifier with images captured using the motion setup below. The classifier can detect whether or not there is a bird in a captured image. The classifier has an accuracy of about 90%, trained on 1000 images that I manually sorted.
+
 ## Motion detection with a USB camera
 One of the main reasons I setup the Hassio instance was to build a usb camera based motion detection and alert system. I have a cheap ([10 pounds on Amazon](https://www.amazon.co.uk/gp/product/B000Q3VECE/ref=oh_aui_detailpage_o02_s00?ie=UTF8&psc=1)) usb webcam that captures images on motion detection [using](https://community.home-assistant.io/t/usb-webcam-on-hassio/37297/7) the [motion](https://motion-project.github.io/) hassio addon. The final view in HA is shown below, with the live view camera image just cropped off the bottom of the image.
 
@@ -54,7 +57,8 @@ folder_watcher:
       - '*capture.jpg'
 ```
 
-The `folder_watcher` fires an event with the event data including the image path to the added file. I use an automation to display the new image on a `local_file` camera using the `camera.update_file_path` service:
+The `folder_watcher` fires an event with the event data including the image path to the added file. I use an automation to display the new image on the `local_file` camera using the `camera.update_file_path` service:
+
 ```yaml
 - action:
     data_template:
@@ -71,24 +75,32 @@ The `folder_watcher` fires an event with the event data including the image path
     platform: event
 ```
 
-I also use an automation to send me the image as a Pushbullet notification:
+I use a template sensor to break out the new file path:
+```yaml
+sensor:
+  - platform: template
+    sensors:
+      last_added_file:
+        friendly_name: Last added file
+        value_template: "{{states.camera.local_file.attributes.file_path}}"
+```
+
+I then use an automation triggered by the state change of the tempplate sensor to send me the new image as a Pushbullet notification:
+
 ```yaml
 - action:
   - data_template:
-      message: Created {{ trigger.event.data.file }} in {{ trigger.event.data.folder
-        }}
-      title: New image captured!
+      message: New image {{ states.camera.local_file.attributes.file_path }}
+      title: New image on camera.local_file
       data:
-        file: ' {{ trigger.event.data.path }} '
+        file: ' {{ states.camera.local_file.attributes.file_path }} '
     service: notify.pushbullet
-  alias: New file alert
+  alias: Updated camera.local_file
   condition: []
-  id: '1520092824697'
+  id: '1524081104601'
   trigger:
-  - event_data:
-      event_type: created
-    event_type: folder_watcher
-    platform: event
+  - entity_id: sensor.last_added_file
+    platform: state
 ```
 
 The final view in HA is that shown at the top of this section. A photo of the setup is shown below.
