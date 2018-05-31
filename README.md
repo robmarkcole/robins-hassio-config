@@ -54,48 +54,41 @@ folder_watcher:
       - '*capture.jpg'
 ```
 
-The `folder_watcher` fires an event with the event data including the image path to the added file. I can break out the image path data using the [input_text](https://www.home-assistant.io/components/input_text/) component, so that the image file path from folder_watcher is stored in the state of the `input_text` entity. In `configuration.yaml` I first add the `input_text` entity:
-```yaml
-input_text:
-  last_added_file:
-    name: Last added file
-    initial: None
-```
-I then use an automation to write the image path data to the `input_text`, in `automations.yaml`:
+The `folder_watcher` fires an event with the event data including the image path to the added file. I use an automation to display the new image on a `local_file` camera using the `camera.update_file_path` service:
 ```yaml
 - action:
     data_template:
-      value: " {{ trigger.event.data.path }} "
-    entity_id: input_text.last_added_file
-    service: input_text.set_value
-  alias: Update input_text
+      file_path: ' {{ trigger.event.data.path }} '
+    entity_id: camera.local_file
+    service: camera.update_file_path
+  alias: Display new image
   condition: []
-  id: '1520092824600'
+  id: '1520092824633'
   trigger:
-  - event_data: {"event_type":"created"}
+  - event_data:
+      event_type: created
     event_type: folder_watcher
     platform: event
 ```
 
-The next step is to use a [shell_command](https://home-assistant.io/components/shell_command/) to over-write `MOTION.jpg` with the latest image, so that it is displayed on the HA front-end by the `local_file` camera configured earlier:
-
-```yaml
-shell_command:
-  overwrite_motion_image: 'cp -rf {{states.input_text.last_added_file.state}} /share/motion/MOTION.jpg'
-```
-
-TO DO: GET RID OF INPUT_TEXT AND JUST USE A TEMPLATE ON THE SHELL_COMMAND
-
-Finally I use an automation to call the `shell_command` every time the `input_text` is updated and a new image is available, adding to `automations.yaml`:
+I also use an automation to send me the image as a Pushbullet notification:
 ```yaml
 - action:
-  - service: shell_command.overwrite_motion_image
-  alias: Overwrite MOTION
+  - data_template:
+      message: Created {{ trigger.event.data.file }} in {{ trigger.event.data.folder
+        }}
+      title: New image captured!
+      data:
+        file: ' {{ trigger.event.data.path }} '
+    service: notify.pushbullet
+  alias: New file alert
   condition: []
-  id: '1517653449704'
+  id: '1520092824697'
   trigger:
-  - entity_id: input_text.last_added_file
-    platform: state
+  - event_data:
+      event_type: created
+    event_type: folder_watcher
+    platform: event
 ```
 
 The final view in HA is that shown at the top of this section. A photo of the setup is shown below.
