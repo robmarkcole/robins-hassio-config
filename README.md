@@ -64,7 +64,7 @@ The `folder_watcher` fires an event with data including the image path to the ad
     data_template:
       file_path: ' {{ trigger.event.data.path }} '
     entity_id: camera.dummy
-    service: camera.update_file_path
+    service: camera.local_file_update_file_path
   alias: Display new image
   condition: []
   id: '1520092824633'
