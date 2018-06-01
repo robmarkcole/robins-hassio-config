@@ -84,7 +84,7 @@ image_processing:
     confidence: 50
     scan_interval: 1000
     source:
-      - entity_id: camera.last_captured_motion
+      - entity_id: camera.dummy
 
 mqtt:
   broker: !secret nas_ip
