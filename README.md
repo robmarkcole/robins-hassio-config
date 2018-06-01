@@ -11,10 +11,11 @@ image_processing:
   - platform: classificationbox
     ip_address: 192.168.0.18
     port: 8080
-    scan_interval: 1000
+    scan_interval: 100000
     source:
       - entity_id: camera.dummy
 ```
+With the long `scan_interval` I am ensuring that processing will only be performed when I trigger it with an automation.
 
 ## Motion detection with a USB camera
 One of the main reasons I setup the Hassio instance was to build a usb camera based motion detection and alert system. I have a cheap ([10 pounds on Amazon](https://www.amazon.co.uk/gp/product/B000Q3VECE/ref=oh_aui_detailpage_o02_s00?ie=UTF8&psc=1)) usb webcam that captures images on motion detection [using](https://community.home-assistant.io/t/usb-webcam-on-hassio/37297/7) the [motion](https://motion-project.github.io/) hassio addon. The final view in HA is shown below, with the live view camera image just cropped off the bottom of the image.
@@ -114,17 +115,17 @@ Finally I use the event fired by the image classification to trigger an automati
 ```yaml
 - action:
   - data_template:
-      message: New image {{ states.camera.local_file.attributes.file_path }}
-      title: New image on camera.local_file
+      message: Class {{ trigger.event.data.class_id }} with probability {{ trigger.event.data.score }}
+      title: New image classified
       data:
-        file: ' {{ states.camera.local_file.attributes.file_path }} '
+        file: ' {{states.camera.dummy.attributes.file_path}} '
     service: notify.pushbullet
-  alias: Updated camera.local_file
+  alias: Send classification
   condition: []
-  id: '1524081104601'
+  id: '1120092824611'
   trigger:
-  - entity_id: sensor.last_added_file
-    platform: state
+    event_type: image_classification
+    platform: event
 ```
 
 The final view in HA is that shown at the top of this section. A photo of the setup is shown below.
