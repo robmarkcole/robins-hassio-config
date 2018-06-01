@@ -23,7 +23,7 @@
     service: image_processing.scan
 - action:
   - data_template:
-      message: Class {{ trigger.event.data.class_id }} with probability {{ trigger.event.data.score }}
+      message: Class with probability
       title: New image classified
       data:
         file: ' {{states.camera.dummy.attributes.file_path}} '
@@ -32,5 +32,7 @@
   condition: []
   id: '1120092824611'
   trigger:
-    event_type: image_classification
+  - event_data:
+      event_type: image_classification
+    event_type: image_processing
     platform: event

@@ -124,9 +124,13 @@ Finally I use the event fired by the image classification to trigger an automati
   condition: []
   id: '1120092824611'
   trigger:
-    event_type: image_classification
+  - event_data:
+      event_type: image_classification
+    event_type: image_processing
     platform: event
 ```
+
+WARNING - GETTING TRIGGER UNDEFINED ERROR WITH MESSAGE
 
 The final view in HA is that shown at the top of this section. A photo of the setup is shown below.
 
