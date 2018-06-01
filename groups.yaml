@@ -9,3 +9,4 @@ Sensors:
   entities:
     - image_processing.classificationbox_dummy_5b0ce5d8023d4e35
     - sensor.last_added_file
+    - sensor.bird_probability
