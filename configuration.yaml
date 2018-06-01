@@ -55,17 +55,13 @@ zone 3:
   icon: mdi:train
 ###########################################################################
 
-blink:
-  username: !secret blink_username
-  password: !secret blink_password
-
 camera:
   - platform: local_file
     file_path: /share/motion/latest.jpg
     name: "Live view"
   - platform: local_file
-    file_path: /share/motion/MOTION.jpg
-    name: "Last captured motion"
+    file_path: /share/motion/dummy.jpg
+    name: "dummy"
 
 counter:
   motion_counter:
@@ -77,34 +73,18 @@ folder_watcher:
     patterns:
       - '*capture.jpg'
 
-hue:
-  bridges:
-    - host: 192.168.0.3
-
 http:
   api_password: !secret http_password
   login_attempts_threshold: 5
 
-input_boolean:
-  house_idle:
-    name: No motion for at least 5 minutes
-    initial: off
-    icon: mdi:timer
-  elgato_door:
-    name: Elgato door sensor
-    icon: mdi:door
-
-input_text:
-  last_added_file:
-    name: Last added file
-    initial: None
-
-ifttt:
-  key: !secret ifttt_key
-
-light:
-  platform: hue
-  host: !secret hue_ip
+image_processing:
+  - platform: classificationbox
+    ip_address: 192.168.0.18
+    port: 8080
+    confidence: 50
+    scan_interval: 1000
+    source:
+      - entity_id: camera.last_captured_motion
 
 mqtt:
   broker: !secret nas_ip
@@ -119,25 +99,11 @@ notify:
     platform: pushbullet
     api_key: !secret pushbullet_key
 
-nest:
-  client_id: !secret nest_id
-  client_secret: !secret nest_secret
-
 panel_iframe:
   configurator:
     title: Configurator
     icon: mdi:wrench
     url: http://hassio.local:3218
-
-recorder:
-  db_url: !secret madia_db
-
-shell_command:
-  overwrite_motion_image: 'cp -rf {{states.input_text.last_added_file.state}} /share/motion/MOTION.jpg'
-
-timer:
-  kettle:
-    duration: '00:05:00'
 
 telegram_bot:
   - platform: broadcast
@@ -145,9 +111,6 @@ telegram_bot:
     allowed_chat_ids:
       - !secret telegram_chat_id
 
-wemo:
-  static:
-    - !secret wemo_ip
 
 ###########################################################################
 ## Includes

@@ -14,7 +14,7 @@ One of the main reasons I setup the Hassio instance was to build a usb camera ba
 </p>
 
 ##### Motion addon setup
-I've configured the [motion](https://github.com/HerrHofrat/hassio-addons/tree/master/motion) add-on (via its hassio tab) with the following settings:
+I've configured the [motion](https://github.com/HerrHofrat/hassio-addons/tree/master/motion) add-on (via its Hassio tab) with the following settings:
 
 ```yaml
 {
@@ -37,7 +37,7 @@ I've configured the [motion](https://github.com/HerrHofrat/hassio-addons/tree/ma
 This setup captures an image every second, saved as `latest.jpg`, and is over-written every second. Additionally, on motion detection a time-stamped image is captured with format `%v-%Y_%m_%d_%H_%M_%S-motion-capture.jpg`.
 
 ##### Home-Assistant config
-The image `latest.jpg` (updated and over-written every second) is displayed on the HA front-end using a [local-file camera](https://home-assistant.io/components/camera.local_file/). I also display the last motion captured image with a second `local_file` camera. **Note** that the image files (here `latest.jpg` and `MOTION.jpg`) must be present when HA starts as the component makes a check that the file exists, and therefore if running for the first time just copy some appropriately named images into the `/share/motion` folder. In `configuration.yaml`:
+The image `latest.jpg` is displayed on the HA front-end using a [local-file camera](https://home-assistant.io/components/camera.local_file/). I will also display the last time-stamped image with a second `local_file` camera. **Note** that the image files (here `latest.jpg` and `dummy.jpg`) must be present when HA starts as the component makes a check that the file exists, and therefore if running for the first time just copy some appropriately named images into the `/share/motion` folder. In `configuration.yaml`:
 
 ```yaml
 camera:
@@ -45,10 +45,10 @@ camera:
     file_path: /share/motion/latest.jpg
     name: "Live view"
   - platform: local_file
-    file_path: /share/motion/MOTION.jpg
-    name: "Last captured motion"
+    file_path: /share/motion/dummy.jpg
+    name: "dummy"
 ```
-I use the [folder_watcher component](https://www.home-assistant.io/components/folder_watcher/) to detect when new motion triggered images are saved:
+I use the [folder_watcher component](https://www.home-assistant.io/components/folder_watcher/) to detect when new time-stamped images are saved:
 
 ```yaml
 folder_watcher:
@@ -57,7 +57,7 @@ folder_watcher:
       - '*capture.jpg'
 ```
 
-The `folder_watcher` fires an event with the event data including the image path to the added file. I use an automation to display the new image on the `local_file` camera using the `camera.update_file_path` service:
+The `folder_watcher` fires an event with data including the image path to the added file. I use an automation to display the new image on the `dummy` camera using the `camera.update_file_path` service:
 
 ```yaml
 - action:
@@ -85,7 +85,7 @@ sensor:
         value_template: "{{states.camera.local_file.attributes.file_path}}"
 ```
 
-I then use an automation triggered by the state change of the tempplate sensor to send me the new image as a Pushbullet notification:
+I use an automation triggered by the state change of the template sensor to send me the new image as a Pushbullet notification:
 
 ```yaml
 - action:
