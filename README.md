@@ -93,7 +93,23 @@ I use a template sensor (in `sensors.yaml`) to break out the new file path:
       friendly_name: Last added file
       value_template: "{{states.camera.dummy.attributes.file_path}}"
 ```
-I use an automation triggered by the state change of the template sensor to send me the new image as a Pushbullet notification:
+I use an automation triggered by the state change of the template sensor to trigger
+image processing on the new image:
+
+```yaml
+- id: '1527837198169'
+  alias: Perform image classification
+  trigger:
+  - entity_id: sensor.last_added_file
+    platform: state
+  condition: []
+  action:
+  - data:
+      entity_id: camera.dummy
+    service: image_processing.scan
+```
+
+Finally I use the event fired by the image classification to trigger an automation to send me the new image and classification as a Pushbullet notification:
 
 ```yaml
 - action:

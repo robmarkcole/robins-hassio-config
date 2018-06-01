@@ -11,3 +11,13 @@
       file_path: ' {{ trigger.event.data.path }} '
     entity_id: camera.dummy
     service: camera.local_file_update_file_path
+- id: '1527837198169'
+  alias: Perform image classification
+  trigger:
+  - entity_id: sensor.last_added_file
+    platform: state
+  condition: []
+  action:
+  - data:
+      entity_id: camera.dummy
+    service: image_processing.scan
