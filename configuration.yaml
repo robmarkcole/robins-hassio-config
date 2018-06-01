@@ -15,8 +15,9 @@ frontend:
   javascript_version: es5
 discovery:
   ignore:
-    - plex_mediaserver
     - apple_tv
+    - philips_hue
+    - plex_mediaserver
 history:
 logbook:
 sun:
@@ -29,31 +30,6 @@ updater:
   include_used_components: true
 #logger:
 #  default: debug
-
-###########################################################################
-## Zones
-zone:
-  name: Home
-  latitude: !secret home_latitude
-  longitude: !secret home_longitude
-  radius: 200
-  icon: mdi:home
-
-
-zone 1:
-  name: Work
-  latitude: !secret work_latitude
-  longitude: !secret work_longitude
-  radius: 1000
-  icon: mdi:worker
-
-zone 3:
-  name: Waterloo
-  latitude: 51.5032
-  longitude: -0.1123
-  radius: 200
-  icon: mdi:train
-###########################################################################
 
 camera:
   - platform: local_file

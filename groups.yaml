@@ -7,7 +7,6 @@ default_view:
 
 Sensors:
   entities:
-    - image_processing.classificationbox_last_captured_motion_5b0ce5d8023d4e35
-    - sensor.number_of_files_motion
-    - sensor.new_image
+    - image_processing.classificationbox_dummy_5b0ce5d8023d4e35
+    - sensor.last_added_file
     - counter.motion_counter
