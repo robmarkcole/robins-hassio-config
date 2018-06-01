@@ -4,7 +4,17 @@ My home-assistant config from my experimental hassio instance. Validated at HA 0
 My [primary](https://github.com/robmarkcole/robins-homeassistant-config) home-assistant instance is running on a synology NAS. I run a Hassio instance on a pi 3 for experiments and testing of new integrations.
 
 # Image classification
-I'm using a [custom component](https://github.com/robmarkcole/HASS-Machinebox-Classificationbox) to perform image classification on images captured by my motion triggered camera. I've trained a [Classificatiobox](https://machinebox.io/docs/classificationbox) classifier with images captured using the motion setup below. The classifier can detect whether or not there is a bird in a captured image. The classifier has an accuracy of about 90%, trained on 1000 images that I manually sorted.
+I'm using a [custom component](https://github.com/robmarkcole/HASS-Machinebox-Classificationbox) to perform image classification on images captured by my motion triggered camera. I've trained a [Classificatiobox](https://machinebox.io/docs/classificationbox) classifier with images captured using the motion setup below. The classifier can detect whether or not there is a bird in a captured image. The classifier has an accuracy of about 90%, trained on 1000 images that I manually sorted. My classifier component is configured with:
+
+```yaml
+image_processing:
+  - platform: classificationbox
+    ip_address: 192.168.0.18
+    port: 8080
+    scan_interval: 1000
+    source:
+      - entity_id: camera.dummy
+```
 
 ## Motion detection with a USB camera
 One of the main reasons I setup the Hassio instance was to build a usb camera based motion detection and alert system. I have a cheap ([10 pounds on Amazon](https://www.amazon.co.uk/gp/product/B000Q3VECE/ref=oh_aui_detailpage_o02_s00?ie=UTF8&psc=1)) usb webcam that captures images on motion detection [using](https://community.home-assistant.io/t/usb-webcam-on-hassio/37297/7) the [motion](https://motion-project.github.io/) hassio addon. The final view in HA is shown below, with the live view camera image just cropped off the bottom of the image.
@@ -75,16 +85,14 @@ The `folder_watcher` fires an event with data including the image path to the ad
     platform: event
 ```
 
-I use a template sensor to break out the new file path:
+I use a template sensor (in `sensors.yaml`) to break out the new file path:
 ```yaml
-sensor:
-  - platform: template
-    sensors:
-      last_added_file:
-        friendly_name: Last added file
-        value_template: "{{states.camera.local_file.attributes.file_path}}"
+- platform: template
+  sensors:
+    last_added_file:
+      friendly_name: Last added file
+      value_template: "{{states.camera.dummy.attributes.file_path}}"
 ```
-
 I use an automation triggered by the state change of the template sensor to send me the new image as a Pushbullet notification:
 
 ```yaml

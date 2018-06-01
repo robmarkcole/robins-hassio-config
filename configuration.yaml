@@ -58,7 +58,6 @@ image_processing:
   - platform: classificationbox
     ip_address: 192.168.0.18
     port: 8080
-    confidence: 50
     scan_interval: 1000
     source:
       - entity_id: camera.dummy
