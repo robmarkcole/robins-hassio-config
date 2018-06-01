@@ -16,6 +16,7 @@ frontend:
 discovery:
   ignore:
     - apple_tv
+    - belkin_wemo
     - philips_hue
     - plex_mediaserver
 history:

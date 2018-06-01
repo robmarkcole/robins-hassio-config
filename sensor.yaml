@@ -1,12 +1,8 @@
-- platform: folder
-  folder: /share/motion/
-  filter: '*motion-capture.jpg'
-
 - platform: template
   sensors:
     last_added_file:
       friendly_name: Last added file
       value_template: "{{states.camera.dummy.attributes.file_path}}"
-    number_of_files_motion:
-      friendly_name: "Motion images"
-      value_template: "{{states.sensor.motion.attributes.number_of_files}}"
+    bird_probability:
+      friendly_name: Bird classification probability
+      value_template: "{{states.image_processing.classificationbox_dummy_5b0ce5d8023d4e35.attributes.birds}}"

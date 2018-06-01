@@ -122,4 +122,4 @@ hassio:
 and restart.
 
 ##### Hassio config changes dont take effect
-If you edit the config and restart HA but don't see desired changes, then reboot the pi with ```hassio homeassistant reboot```.
+If you edit the config and restart HA but don't see desired changes, then reboot the pi with ```hassio host reboot```
