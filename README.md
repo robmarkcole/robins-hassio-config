@@ -130,9 +130,11 @@ Finally I use the event fired by the image classification to trigger an automati
     platform: event
 ```
 
-WARNING - GETTING TRIGGER UNDEFINED ERROR WITH MESSAGE
+<p align="center">
+<img src="https://github.com/robmarkcole/robins-hassio-config/blob/master/images/iphone_notification.jpeg" width="300">
+</p>
 
-The final view in HA is that shown at the top of this section. A photo of the setup is shown below.
+A photo of my birdfeeder setup is shown below.
 
 <p align="center">
 <img src="https://github.com/robmarkcole/robins-hassio-config/blob/master/images/camera_setup.jpg" width="500">
