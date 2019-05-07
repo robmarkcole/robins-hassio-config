@@ -1,5 +1,5 @@
 # robins-hassio-config
-My home-assistant config from my experimental hassio instance. Validated at HA 0.67.
+My home-assistant config from my experimental hassio instance. Validated at HA 0.92.
 
 My [primary](https://github.com/robmarkcole/robins-homeassistant-config) home-assistant instance is running on a synology NAS. I run a Hassio instance on a pi 3 for experiments and testing of new integrations.
 
@@ -139,6 +139,16 @@ A photo of my birdfeeder setup is shown below.
 <p align="center">
 <img src="https://github.com/robmarkcole/robins-hassio-config/blob/master/images/camera_setup.jpg" width="500">
 </p>
+
+## Hassio Add-ons
+Try to limit your addons, as too many will make your system unstable.
+1. IDE: https://github.com/hassio-addons/addon-ide
+2. SSH & Web Terminal:  https://github.com/hassio-addons/addon-ssh/blob/v3.2.0/README.md
+3. MQTT Server & Web client: https://github.com/hassio-addons/addon-mqtt/blob/master/README.md
+4. Motion camera detection: https://github.com/HerrHofrat/hassio-addons
+5. Glances: https://github.com/hassio-addons/addon-glances
+6. Jupyterlab Lite: https://github.com/hassio-addons/addon-jupyterlab-lite
+7. Log Viewer: https://github.com/hassio-addons/addon-log-viewer
 
 
 ## Tips

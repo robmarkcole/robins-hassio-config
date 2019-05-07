@@ -1,99 +1,91 @@
-## HASS config
 homeassistant:
-  name: Home
-  latitude: !secret home_latitude
-  longitude: !secret home_longitude
-  elevation: 39
   unit_system: metric
-  time_zone: Europe/London
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: UTC
   customize: !include customize.yaml
-  whitelist_external_dirs:
-    - /config/
-    - /share
 
 frontend:
-  javascript_version: es5
+config:
+updater:
 discovery:
-  ignore:
-    - apple_tv
-    - belkin_wemo
-    - philips_hue
-    - plex_mediaserver
 history:
 logbook:
-sun:
-config:
-hassio:
-#cloud:
-ios:
-python_script:
-updater:
-  include_used_components: true
-#logger:
-#  default: debug
+map:
+cloud:
+speedtestdotnet:
+mobile_app:
+lovelace:
+  mode: yaml
 
-camera:
-  - platform: local_file
-    file_path: /share/motion/latest.jpg
-    name: "Live view"
-  - platform: local_file
-    file_path: /share/motion/dummy.jpg
-    name: "dummy"
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
 
-counter:
-  motion_counter:
-    initial: 0
-    step: 1
+logger:
+  default: info
 
-folder_watcher:
-  - folder: /share/motion
-    patterns:
-      - '*capture.jpg'
+blink:
+  username: !secret blink_username
+  password: !secret blink_password
 
-http:
-  api_password: !secret http_password
-  login_attempts_threshold: 5
-
-image_processing:
-  - platform: classificationbox
-    ip_address: 192.168.0.18
-    port: 8080
-    scan_interval: 1000
-    source:
-      - entity_id: camera.dummy
+weather:
+  - platform: darksky
+    api_key: !secret dark_sky_api_key
 
 mqtt:
-  broker: !secret nas_ip
+  discovery: true
+  broker: localhost
+  port: 1883
+  username: robin
+  password: !secret mqtt_password
 
-notify:
-  - name: robins_and_marias_iphones
-    platform: group
-    services:
-      - service: ios_robins_iphone
-      - service: ios_marias_iphone
-  - name: pushbullet
-    platform: pushbullet
-    api_key: !secret pushbullet_key
+camera:
+  - platform: onvif
+    host: !secret dericam_ip
+    name: dericam_1_onvif
+    password: !secret dericam_1_password
+    
+
+sensor:
+  - platform: london_underground
+    line:
+      - Jubilee
+  - platform: uk_transport
+    app_id: !secret transport_api_ID
+    app_key: !secret transport_api_ID_Key
+    queries:
+      - mode: train
+        origin: MOT
+        destination: WAT
 
 panel_iframe:
-  configurator:
-    title: Configurator
+  ssh:
+    title: SSH
     icon: mdi:wrench
-    url: http://hassio.local:3218
+    url: http://hassio.local:7681
+  logs:
+    title: Logs
+    icon: mdi:wrench
+    url: http://hassio.local:4277
+  ide:
+    title: IDE
+    icon: mdi:code-braces
+    url: http://hassio.local:8321
+  glances:
+    title: Glances
+    icon: mdi:speedometer
+    url: http://hassio.local:61208
+  signalbox:
+    title: Signalbox
+    icon: mdi:speedometer
+    url: https://www.map.signalbox.io/
 
-telegram_bot:
-  - platform: broadcast
-    api_key: !secret telegram_api
-    allowed_chat_ids:
-      - !secret telegram_chat_id
-
-
-###########################################################################
-## Includes
-
-script: !include scripts.yaml
-switch: !include switch.yaml
-binary_sensor: !include binary_sensor.yaml
-sensor: !include sensor.yaml
-automation: !include automations.yaml
-group: !include groups.yaml
+zone:
+  # This will override the default home zone
+  - name: Home
+    latitude: !secret home_latitude
+    longitude: !secret home_longitude
+    elevation: 39
+    unit_system: metric
+    time_zone: Europe/London
+    radius: 1000
